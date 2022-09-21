@@ -7,6 +7,8 @@ library(readxl)
 library(leaflet)
 library(ggwordcloud)
 library(ghibli)
+library(treemapify)
+
 
 
 Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
@@ -22,12 +24,12 @@ Tabla1 <- Tabla %>%
 library(mxmaps)
 
 
-data("df_mxstate_2020")
-
-df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
-mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
-                    title = "Percentage of the population that identifies as Afro-Mexican",
-                    legend = "%")
+#data("df_mxstate_2020")
+#
+#df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
+#mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
+#                    title = "Percentage of the population that identifies as Afro-Mexican",
+#                    legend = "%")
 
 head(Tabla1)
 
@@ -161,6 +163,52 @@ Figure3T
 ggsave(filename = "word_cloud1.png", path = "day_2/figures/", width = 25, height = 20, 
        units = "cm",
        plot = Figure3T) 
+
+
+# hacer un Treemap
+
+#usemos Tabla_cloud
+
+Tabla_cloud
+
+#Colores para los géneros
+razas2 <- Tabla_cloud %>% 
+  select(Raza_primaria) %>% 
+  distinct()
+
+# otro paquete
+library(randomcoloR)
+
+
+TT <- nrow(razas2)
+paletteTT <- distinctColorPalette(TT)
+
+
+razas2 <- razas2 %>% 
+  mutate(colores_razas = paletteTT)
+
+
+Tabla_cloud <- Tabla_cloud %>% 
+  left_join(razas2, by = "Raza_primaria")
+
+
+
+fig_colores <- ggplot(Tabla_cloud, aes(area = value, fill = colores_razas, label = Raza_primaria)) + 
+  geom_treemap() +
+  geom_treemap_text(colour = "black",
+                    place = "centre",
+                    size = 15) +
+  scale_fill_manual(values = Tabla_cloud$colores_razas, 
+                    breaks = Tabla_cloud$colores_razas) +
+  labs(#title = "Figura 7. Colores de la mieles", 
+    caption = "Los números al centro de cada cuadro representa el color determinado por los encuestados",
+    x = "", y = "", fill = "") +
+  theme(text = element_text(family = "Times"),
+        legend.position = "none",
+        axis.text = element_text(size = 8),
+        title = element_text(size = 10)) 
+
+fig_colores
 
 
 
