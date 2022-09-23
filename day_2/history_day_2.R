@@ -13,9 +13,11 @@ library(treemapify)
 
 #Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
 
+# The data base of "data" was produced with de file: PGMN:Zendro2R.Rmd
+
+
 Tabla1 <- data %>% 
   select(estado, longitud, latitud, genero, especie, raza, altitud)
-
 
 
 #Distribución en el país
@@ -24,12 +26,15 @@ Tabla1 <- data %>%
 library(mxmaps)
 
 
-#data("df_mxstate_2020")
+# Ver la página de mxmaps
+data("df_mxstate_2020")
+
+df_mxstate
 #
-#df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
-#mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
-#                    title = "Percentage of the population that identifies as Afro-Mexican",
-#                    legend = "%")
+df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
+mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
+                    title = "Percentage of the population that identifies as Afro-Mexican",
+                    legend = "%")
 
 head(Tabla1)
 
