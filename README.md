@@ -45,7 +45,7 @@ https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf
 
 ### Consultas (queries) de datos desde R utilizando la API de Zendro
 
-[Notas "Introducción a GraphQL y consultas a la API"](GraphQL_intro.md)
+[Notas "Introducción a GraphQL y consultas a la API"](day_1/GraphQL_intro.md)
 
 
 
