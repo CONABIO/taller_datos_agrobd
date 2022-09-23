@@ -1726,8 +1726,9 @@ que funcionara:</p>
 tabla bonita dentro de R, utilizamos la función
 <code>get_from_graphQL</code>. Para poderla cargar a R, necesitas hacer
 <code>source()</code> al archivo “get_from_graphQL.R”, que en este
-ejemplo se asume se encuentra en el working directory de estas
-notas:</p>
+ejemplo se asume se encuentra en el working directory de estas notas.
+También puedes copiar y pegar el contenido de la función
+“get_from_graphQL.R” y pegarla en tu script.</p>
 <pre class="r"><code># load function
 source(&quot;get_from_graphQL.R&quot;)
 
@@ -1960,6 +1961,9 @@ data&lt;-rbind(data, get_from_graphQL(query=my_query, url=&quot;https://maices-s
 ##  3rd Qu.: -95.93   3rd Qu.:2106.0                     
 ##  Max.   : -86.83   Max.   :3310.0                     
 ##                    NA&#39;s   :8</code></pre>
+<p>Si lo deseas, puedes guardar los datos como un archivo en tu
+computadora.</p>
+<pre class="r"><code>write.table(data, file=&quot;pgmn_data.txt&quot;, row.names = FALSE)</code></pre>
 </div>
 
 
