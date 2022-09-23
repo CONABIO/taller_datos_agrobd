@@ -4,6 +4,8 @@ Responsables de impartir el taller: Alicia Mastretta Yanes (amastretta@conabio.g
 
 En este taller aprenderemos los principios básicos de manejo de datos abiertos con énfasis en los datos abiertos de agrobiodiversidad que mantiene la CONABIO. Utilizaremos estos datos para hacer análisis y visualizaciones reproducibles utilizando el software libre R (https://www.r-project.org).
 
+Versión sitio web de las notas: https://conabio.github.io/taller_datos_agrobd/
+
 ### Objetivo:
 Dar a conocer los datos abiertos de agrobiodiversidad que mantiene la CONABIO y herramientas de software libre para analizarlos y visualizarlos de forma reproducible.
 
