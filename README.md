@@ -43,8 +43,9 @@ https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf
 [Notas "Datos de Agrobiodiversidad en la CONABIO"](day_1/datos_agrobiodiversidad_conabio.md)
 
 
-
 ### Consultas (queries) de datos desde R utilizando la API de Zendro
+
+[Notas "Introducción a GraphQL y consultas a la API"](GraphQL_intro.md)
 
 
 
