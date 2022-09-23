@@ -1,0 +1,203 @@
+---
+title: "Bajar datos maices desde la API de Graphql"
+output:
+  html_document:
+    df_print: paged
+---
+
+Librerías necesarias para correr este tutorial:
+```{r, warning=FALSE}
+library(httr)
+library(jsonlite)
+library(dplyr)
+library(stringr)
+```
+
+## Descargar un conjunto de datos de < 1000 registros 
+
+Primero hay que definir una query the GraphQL para bajar los datos deseados.
+
+La [documentación de GraphQL](https://graphql.org/learn/) y la [Introducción a GraphQL y consultas a la API](GraphQL_intro.md) tienen los detalles, pero en resumen una query está compuesta por **tipos** y **campos** dentro de esos tipos. Puedes pensar en los **tipos** como los **nombres de las tablas** y los **campos** como las columnas de dichas tablas. Los registros serán las filas de datos de dichas tablas. GraphQL puede obtener campos asociados a un registro en diferentes tipos. 
+
+En la query de abajo los tipos son `registros`, `proyecto`, `sitio`, `taxon`, y para cada uno pedimos nos brinde solo ciertos campos de todos los posibles.
+
+Los tipos pueden contener agrumentos, que se especifican dentro de `()`. Algunos de estos pueden ser obligatorios, como `pagination`, que sirve para decir cuántos elementos quieres obtener. El máximo que pueden hacerse por consulta son 1000. El ejemplo de abajo solo baja los 100 primeros resultados. En la última sección de este tutorial explicamos cómo definir `pagination` para bajar un número determinado, o todos, los elementos de un conjunto de datos.
+
+Para explorar qué argumentos tiene cada tipo, puedes ir a la API que deseas consultar y buscar el nombre del tipo en la documentanción (menú `Docs` en la esquina superior derecha). Los argumentos obligatorios terminan en `!`. 
+
+Antes de intentar bajar desde R, recomendamos escribir la query en en la API graphiQL y asegurarse que funciona. Es decir, que te regresa los datos deseados como en el panel de la derecha en la imagen de arriba.
+
+Una vez que tengas la query funcionando, deberás guardarla en R como un vector de caracteres:
+
+(el ejemplo de abajo solo baja los 100 primeros resultados, en la última sección de este tutorial explicamos cómo definir `pagination` para bajar un número determinado, o todos, los elementos de un conjunto de datos).
+
+```{r}
+my_query<- "{
+  registros(pagination: {limit: 100, offset: 0}) {
+    taxon(search: {field: taxon_id}) {
+      genero
+      especie
+      raza
+    }
+    sitio(search: {field: id}) {
+      latitud
+      longitud
+      altitud
+      estado
+    }
+    
+    proyecto
+    procedencia
+    fecha_colecta_observacion
+    colector_observador
+    coleccion
+    numero_catalogo
+    fecha_determinacion
+    determinador
+    licencia_uso
+    referencias
+    forma_citar
+  }
+}
+"
+```
+
+También debemos definir la url del servidor GraphiQL al que debe hacerse el query, que es la misma url donde escribiste la query para ver que funcionara:
+```{r}
+url<-"https://maices-siagro.conabio.gob.mx/api/graphql"
+```
+
+Para bajar los datos desde el servidor GraphQL y transformarlos a una tabla bonita dentro de R, utilizamos la función `get_from_graphQL`. Para poderla cargar a R, necesitas hacer `source()` al archivo "get_from_graphQL.R", que en este ejemplo se asume se encuentra en el working directory de estas notas:
+
+```{r}
+# load function
+source("get_from_graphQL.R")
+
+# check what it does
+get_from_graphQL
+```
+
+Ahora podemos correr la función (utilizando la query que habíamos definido anteriormente):
+
+```{r}
+# get data
+data<-get_from_graphQL(query=my_query, url= url)
+head(data)
+```
+
+## Descargar todos los datos (> 1,000)
+
+Si el dataset es muy grande, probablemente no podamos descargarlo de una sola vez, por lo que será necesario utilizar paginación (*pagination*), es decir, descargarlo por partes. Este es un parámetro dentro de la query de graphQL. La paginación puede hacerse con:
+
+* *Limit-offset*: mediante el índice del primer elemento a obtener (`offset`, default 0) y el número de elmentos a obtener (`limit`). 
+
+* *Cursor-based*: mediante el ID único (`cursor`) del elemento a obtener primero, y un número de elmentos a obtener.
+
+Dentro de una query de Zendro la paginación tiene la sintaxis: 
+
+`pagination:{limit:[integer], offset:[integer]}`
+
+[Ver documentación de graphQL](https://graphql.org/learn/pagination/) y este [tutoral de paginación en GraphQL](https://daily.dev/blog/pagination-in-graphql) para más detalles.
+
+En los ejemplos anteriores descargamos solo 100 elementos (`pagination:{limit:100})`) del conjunto de datos de las Colectas RG, pero en realidad la base completa es mucho mayor.
+
+Para saber el número de elementos de un tipo, podemos hacer una query con la función `count`, si está disponible para el tipo del que deseamos saber cuántos elementos tiene. Podemos saber si esta función está disponible en la documentación (`Docs`, esquina superior derecha de la API). 
+
+En este tutorial nos interesa saber el número de registros, por lo tanto:
+
+```{r}
+# query API with count function
+no_records<-get_from_graphQL(query="{countRegistros}", url="https://maices-siagro.conabio.gob.mx/api/graphql")
+
+# change to vector, we don't need a df
+no_records<-no_records[1,1]
+no_records
+```
+
+El límite de elementos que podemos consultar en una sola query a la API es de 1,000 y en este caso tenemos `r no_records`.
+Por lo que descargaremos la base de 1,000 en 1,000 hasta cubrir el total de elementos.
+
+El siguiente código calcula la paginación necesarios para bajar un determinado número de registros. Luego corre la función `get_from_graphQL()` dentro de un loop en cada página hasta obtener el total de registros deseados en una sola data frame.
+
+```{r}
+# Define desired number of records and limit. Number of pages and offset will be estimated based on the number of records to download
+no_records<- no_records # this was estimated above with a query to count the total number of records, but you can also manually change it to a custom desired number
+my_limit<-1000 # max 1000
+no_pages<-ceiling(no_records/my_limit)
+
+## Define offseet.
+# You can use the following loop:
+# to calculate offset automatically basedon 
+# on the number of pages needed.
+my_offset<-0 # start in 0. Leave like this
+for(i in 1:no_pages){ # loop to 
+  my_offset<-c(my_offset, my_limit*i)
+}
+
+# Or you can define the offset manually 
+# uncommenting the following line
+# and commenting the loop above:
+# offeset<-c(#manually define your vector) 
+
+## create obtjet where to store downloaded data. Leave empity
+data<-character()
+
+##
+## Loop to download the data from GraphQL using pagination
+## 
+
+for(i in c(1:length(my_offset))){
+
+# Define pagination
+    pagination <- paste0("limit:", my_limit, ", offset:", my_offset[i])
+    
+# Tell the user in which page we are processing:
+    print(paste("processing pagination with", pagination))
+
+# Define query looping through desired pagination:
+my_query<- paste0("{
+  registros(pagination: {",pagination, "}) {
+    taxon(search: {field: taxon_id}) {
+      genero
+      especie
+      raza
+    }
+    sitio(search: {field: id}) {
+      latitud
+      longitud
+      altitud
+      estado
+    }
+    proyecto
+    procedencia
+    fecha_colecta_observacion
+    colector_observador
+    coleccion
+    numero_catalogo
+    fecha_determinacion
+    determinador
+    licencia_uso
+    referencias
+    forma_citar
+  }
+}
+")
+
+# Get data and add it to the already created df
+data<-rbind(data, get_from_graphQL(query=my_query, url="https://maices-siagro.conabio.gob.mx/api/graphql"))
+
+#end of loop
+}
+
+```
+
+El resultado son los datos completos de la base:
+
+```{r}
+head(data)
+tail(data)
+summary(data)
+```
+
+
+

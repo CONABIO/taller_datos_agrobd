@@ -47,7 +47,11 @@ https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf
 
 [Notas "Introducción a GraphQL y consultas a la API"](day_1/GraphQL_intro.md)
 
+[Notas de Rmarkdown "Bajar datos maices desde la API de Graphql"](day_1/PGMN_Zendro2R.html)  
 
+[Script Rmarkdown "Bajar datos maices desde la API de Graphql"](day_1/PGMN_Zendro2R.Rmd)  
+
+[Función `get_from_graphQL.R`](day_1/get_from_graphQL.R)
 
 ## Día 2
 *	Exploración de datos en R
