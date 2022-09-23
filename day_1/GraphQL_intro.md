@@ -37,7 +37,7 @@ En el ejemplo de la documentación de arriba, podemos ver que el primer tipo es 
 
 ## Escribir consultas
 
-La [documentación de GraphQL](https://graphql.org/learn/) incluye una gran cantidad de recursos para aprender a crear consultas y aprovechar al máximo el poder de GraphQL. A continuación, proporcionamos solo un breve resumen, después del cual te recomendamos que explores la [documentación de GraphQL] (https://graphql.org/learn/) para obtener más información. Siéntete libre de probar tus consultas en nuestra [Zendro Dummy API](https://zendro.conabio.gob.mx/dummy_api) que configuramos para las pruebas.
+La [documentación de GraphQL](https://graphql.org/learn/) incluye una gran cantidad de recursos para aprender a crear consultas y aprovechar al máximo el poder de GraphQL. A continuación, proporcionamos solo un breve resumen, después del cual te recomendamos que explores la [documentación de GraphQL](https://graphql.org/learn/) para obtener más información. Siéntete libre de probar tus consultas en nuestra [Zendro Dummy API](https://zendro.conabio.gob.mx/dummy_api) que configuramos para las pruebas.
 
 **Consejos de sintaxis de GraphQL:**
 
