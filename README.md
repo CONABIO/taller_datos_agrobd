@@ -29,3 +29,25 @@ Traer su propia laptop con R y Rstudio (https://www.rstudio.com) instalados
 https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf 
 
 
+# Índice de materiales
+
+## Día 1
+
+
+### Datos abiertos
+
+[Presentación "Ciencia abierta y datos abiertos"](https://zenodo.org/record/6640644/files/Taller%20-%20D%C3%ADa%201.pdf?download=1) tomada de: CONABIO. Taller Datos abiertos de agrobiodiversidad. Proyecto GEF Agrobiodiversidad Mexicana. CONABIO, México, 2021.[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6640644.svg)](https://doi.org/10.5281/zenodo.6640644)
+
+### Datos de agrobiodiversidad en la CONABIO 
+
+[Notas "Datos de Agrobiodiversidad en la CONABIO"](day_1/datos_agrobiodiversidad_conabio.md)
+
+
+
+### Consultas (queries) de datos desde R utilizando la API de Zendro
+
+
+
+## Día 2
+*	Exploración de datos en R
+*	Visualización de datos en R
