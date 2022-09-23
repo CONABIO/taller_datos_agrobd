@@ -30,3 +30,11 @@ Las herramientas del SiAgroBD son parte de "la travesía de los datos" desde su 
 No basta con publicar datos abiertos de agrobiodiversidad para que se vuelvan útiles, por eso uno de los componentes del SiAgroBD es construir capacidades que permitan que los datos lleguen y sean utilizados por públicos muy diversos.
 
 ![](siagro_slides/Slide4.jpeg)
+
+
+### Referencias
+
+* Casas A. & M. Vallejo, 2019. Agroecología y agrobiodiversidad. En: Merino P. L. Crisis ambiental en México. Ruta para el cambio. Universidad Nacional Autónoma de México, México pp.99-117
+*   FAO. 2004. What is agrobiodiversity?. En: Building on Gender, Agrobiodiversity and Local Knowledge.
+*    Jackson, L. E., U. Pascual y T. Hodgkin. 2007. Utilizing and Conserving Agrobiodiversity in Agricultural Landscapes. Agriculture, Ecosystems & Environment 121 (3): 196–210.
+
