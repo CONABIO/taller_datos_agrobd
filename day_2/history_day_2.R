@@ -2,16 +2,19 @@ library(tidyverse)
 library(ggrepel)
 library(janitor)
 library(patchwork)
-#library(xlsx)
+library(xlsx)
 library(readxl)
 library(leaflet)
 library(ggwordcloud)
 library(ghibli)
 library(treemapify)
+library(mxmaps)
+library(colorfindr)
 
+Tabla1 <- source("day_2/alice_code.R")
 
-
-#Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
+#tardó 10 minutos
+ #Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
 
 # The data base of "data" was produced with de file: PGMN:Zendro2R.Rmd
 
@@ -23,7 +26,6 @@ Tabla1 <- data %>%
 #Distribución en el país
 #Usemos primero el paquete de mxmaps para hacer hexágonos del país
 
-library(mxmaps)
 
 
 # Ver la página de mxmaps
@@ -223,7 +225,8 @@ fig_colores
 
 # https://rdrr.io/cran/colorfindr/man/get_colors.html 
 
-library(colorfindr)
+# de la librería
+#library(colorfindr)
 
 
 # Extract all colors except white
