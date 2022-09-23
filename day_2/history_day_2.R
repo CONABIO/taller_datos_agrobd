@@ -2,54 +2,62 @@ library(tidyverse)
 library(ggrepel)
 library(janitor)
 library(patchwork)
-#library(xlsx)
+library(xlsx)
 library(readxl)
 library(leaflet)
 library(ggwordcloud)
 library(ghibli)
 library(treemapify)
+library(mxmaps)
+library(colorfindr)
+
+Tabla1 <- source("day_2/alice_code.R")
+
+#tardó 10 minutos
+ #Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
+
+# The data base of "data" was produced with de file: PGMN:Zendro2R.Rmd
 
 
-
-Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
-
-Tabla1 <- Tabla %>% 
-  select(Estado, Municipio, Localidad, Longitud, Latitud, Genero, Especie, Complejo_racial, Raza_primaria, AltitudProfundidad)
-
+Tabla1 <- data %>% 
+  select(estado, longitud, latitud, genero, especie, raza, altitud)
 
 
 #Distribución en el país
 #Usemos primero el paquete de mxmaps para hacer hexágonos del país
 
-library(mxmaps)
 
 
-#data("df_mxstate_2020")
+# Ver la página de mxmaps
+data("df_mxstate_2020")
+
+df_mxstate
 #
-#df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
-#mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
-#                    title = "Percentage of the population that identifies as Afro-Mexican",
-#                    legend = "%")
+df_mxstate_2020$value = df_mxstate_2020$afromexican / df_mxstate_2020$pop * 100
+mxhexbin_choropleth(df_mxstate_2020, num_colors = 1,
+                    title = "Percentage of the population that identifies as Afro-Mexican",
+                    legend = "%")
 
 head(Tabla1)
 
 #Cambiar Estado a lower case
 
 Tabla2 <- Tabla1 %>% 
-  mutate(Estado = str_to_title(Estado))
+  mutate(estado = str_to_title(estado))
+
 
 base_data <- df_mxstate_2020 %>% 
   select(region, state_name) %>% 
-  rename(Estado = state_name) %>% 
-  right_join(Tabla2, by = "Estado")
+  rename(estado = state_name) %>% 
+  right_join(Tabla2, by = "estado")
 
 #Ahora hagamos la sumatoria para la raza Tuxpeño
 
 Tabla3 <- base_data %>% 
-  select(region, Estado, Raza_primaria) %>% 
+  select(region, estado, raza) %>% 
   mutate(value = 1) %>% 
-  filter(Raza_primaria == "Celaya") %>% 
-  group_by(region, Estado, Raza_primaria) %>% 
+  filter(raza == "Comiteco") %>% 
+  group_by(region, estado, raza) %>% 
   summarise_all(sum) %>% 
   drop_na()
 
@@ -61,17 +69,17 @@ mxhexbin_choropleth(Tabla3, num_colors = 1,
 
 base_data1 <- df_mxstate_2020 %>% 
   select(region, state_name) %>% 
-  rename(Estado = state_name)
+  rename(estado = state_name)
 
 Tabla4 <- Tabla3 %>% 
-  full_join(base_data1, by = "Estado") %>% 
-  select(region.y, Estado, value) %>% 
+  full_join(base_data1, by = "estado") %>% 
+  select(region.y, estado, value) %>% 
   replace_na(., list(value = 0)) %>% 
   rename(region = region.y) %>% 
   arrange(region)
 
 mxhexbin_choropleth(Tabla4, num_colors = 1,
-                    title = "Maíz Celaya en México",
+                    title = "Maíz Comiteco en México",
                     legend = "registros")
 
 # Ahora vamos hacerlo con leaflet el total de registros
@@ -80,22 +88,22 @@ mxhexbin_choropleth(Tabla4, num_colors = 1,
 
 m <- leaflet(data = Tabla2) %>% 
   addTiles() %>% 
-  addMarkers(lng = Longitud , lat = Latitud, popup = Raza_primaria )
+  addMarkers(lng = longitud , lat = latitud, popup = raza )
 
 # No funciona...porqué?
 
 # cambiar los nombres de las columnas x long y lat
 
 Tabla2.1 <- Tabla2 %>% 
-  rename(long = Longitud) %>% 
-  rename(lat = Latitud) %>% 
+  rename(long = longitud) %>% 
+  rename(lat = latitud) %>% 
   drop_na(long) %>% 
-  filter(Raza_primaria != "ND") %>% 
-  filter(Raza_primaria == "Tuxpeño")
+  filter(raza != "ND") %>% 
+  filter(raza == "Comiteco")
 
 m <- leaflet(data = Tabla2.1) %>% 
   addTiles() %>% 
-  addCircleMarkers(~long , ~lat, popup = ~Raza_primaria, radius = 1, weight = 8, 
+  addCircleMarkers(~long , ~lat, popup = ~raza, radius = 1, weight = 8, 
                    color = "yellow")
 
 m
@@ -104,15 +112,15 @@ m
 
 myMap <- function(raza_maiz, color1){
   Tabla2.1 <- Tabla2 %>% 
-    rename(long = Longitud) %>% 
-    rename(lat = Latitud) %>% 
+    rename(long = longitud) %>% 
+    rename(lat = latitud) %>% 
     drop_na(long) %>% 
-    filter(Raza_primaria != "ND") %>% 
-    filter(Raza_primaria == raza_maiz)
+    filter(raza != "ND") %>% 
+    filter(raza == raza_maiz)
   
   m <- leaflet(data = Tabla2.1) %>% 
     addTiles() %>% 
-    addCircleMarkers(~long , ~lat, popup = ~Raza_primaria, radius = 1, weight = 8, 
+    addCircleMarkers(~long , ~lat, popup = ~raza, radius = 1, weight = 8, 
                      color = color1)
   
   m
@@ -125,7 +133,6 @@ myMap("Chalqueño", "red")
 ghibli_palette("PonyoLight")
 ghibli_palettes
 ghibli_palettes$MarnieDark2
-# hagamos una nuve de palabras de todas las razas
 
 ghibli_palettes$MononokeMedium
 
@@ -139,16 +146,16 @@ head(Tabla1)
 #Nube de palabras por complejo racial y por raza
 
 Tabla_cloud <- Tabla1 %>% 
-  select(Raza_primaria) %>% 
+  select(raza) %>% 
   mutate(value = 1) %>% 
-  group_by(Raza_primaria) %>% 
+  group_by(raza) %>% 
   summarise_all(sum) %>% 
   dplyr::mutate(angle = 0 * sample(c(0, 1), n(), replace = TRUE, prob = c(50, 50))) %>% 
-  filter(Raza_primaria != "ND") %>% 
+  filter(raza != "ND") %>% 
   arrange(desc(value))
   
 
-Figure3T <-  ggplot(Tabla_cloud, aes(label = Raza_primaria, size = log(value), color = value, 
+Figure3T <-  ggplot(Tabla_cloud, aes(label = raza, size = log(value), color = value, 
                                 angle = angle)) +
   geom_text_wordcloud(shape = "circle", eccentricity = 0.9, tstep = 0.02) +
   theme_minimal() +
@@ -175,7 +182,7 @@ Tabla_cloud
 
 #Colores para los géneros
 razas2 <- Tabla_cloud %>% 
-  select(Raza_primaria) %>% 
+  select(raza) %>% 
   distinct()
 
 # otro paquete
@@ -191,11 +198,11 @@ razas2 <- razas2 %>%
 
 
 Tabla_cloud1 <- Tabla_cloud %>% 
-  left_join(razas2, by = "Raza_primaria")
+  left_join(razas2, by = "raza")
 
 
 
-fig_colores <- ggplot(Tabla_cloud1, aes(area = value, fill = colores_razas, label = Raza_primaria)) + 
+fig_colores <- ggplot(Tabla_cloud1, aes(area = value, fill = colores_razas, label = raza)) + 
   geom_treemap() +
   geom_treemap_text(colour = "black",
                     place = "centre",
@@ -218,7 +225,8 @@ fig_colores
 
 # https://rdrr.io/cran/colorfindr/man/get_colors.html 
 
-library(colorfindr)
+# de la librería
+#library(colorfindr)
 
 
 # Extract all colors except white
@@ -229,7 +237,6 @@ library(colorfindr)
 #Prueba
 #uno <- get_colors(img =  "day_2/figures/prueba.png", exclude_col = c("white", "black")) %>% 
 #  mutate(numero = seq(1:n()))
-
 
 uno <- get_colors(img =  "day_2/figures/maices.png", exclude_col = c("white", "black")) %>% 
   mutate(numero = seq(1:n()))
@@ -247,7 +254,7 @@ head(Tabla_cloud)
 Tabla_cloud2 <- Tabla_cloud %>% 
   mutate(colores_razas = uno2)
 
-fig_colores <- ggplot(Tabla_cloud2, aes(area = value, fill = colores_razas, label = Raza_primaria)) + 
+fig_colores <- ggplot(Tabla_cloud2, aes(area = value, fill = colores_razas, label = raza)) + 
   geom_treemap() +
   geom_treemap_text(colour = "black",
                     place = "centre",
@@ -275,18 +282,18 @@ head(uno1)
 
 #Visualización de la altitud
 
-head(Tabla)
-Altitud <- Tabla %>% 
-  select(Raza_primaria, AltitudProfundidad) %>% 
-  rename(Altitud = AltitudProfundidad) %>% 
+head(Tabla1)
+Altitud <- Tabla1 %>% 
+  select(raza, altitud) %>% 
+  rename(Altitud = altitud) %>% 
   filter(Altitud != "ND") %>% 
-  filter(Raza_primaria != "ND") %>% 
+  filter(raza != "ND") %>% 
   filter(Altitud < 5000) %>% 
   drop_na()
 
 figura1 <- ggplot(data = Altitud) +
- # geom_point(aes(x = Raza_primaria, y = Altitud)) +
-  geom_jitter(aes(x = Raza_primaria, y = Altitud, colour = Raza_primaria), alpha = 0.1) +
+ # geom_point(aes(x = raza, y = Altitud)) +
+  geom_jitter(aes(x = raza, y = Altitud, colour = raza), alpha = 0.1) +
   coord_flip() +
   theme_minimal() +
   theme(legend.position = "none") 
@@ -295,8 +302,8 @@ figura1
 
 # vamos a hacer nuestros colores
 
-colores1 <- data.frame(Raza_primaria = levels(as.factor(Tabla$Raza_primaria))) %>% 
-  filter(Raza_primaria != "ND")
+colores1 <- data.frame(raza = levels(as.factor(Tabla1$raza))) %>% 
+  filter(raza != "ND")
 
 uno <- ghibli_palettes$MarnieDark1
 dos <- ghibli_palettes$MarnieDark2
@@ -310,18 +317,18 @@ nueve <- ghibli_palettes$TotoroMedium
 diez <- ghibli_palettes$MononokeMedium
 
 colores <- c(uno, dos, tres, cuatro, cinco, seis, siete, ocho, nueve, diez)
-colores <- colores[1:64]
+colores <- colores[1:54]
 
 colores1 <- colores1 %>% 
   bind_cols(colores) %>% 
   rename(colores = `...2`)
 
 Altitud1 <- Altitud %>% 
-  left_join(colores1, by = "Raza_primaria")
+  left_join(colores1, by = "raza")
 
 figura2 <- ggplot(data = Altitud1) +
-  # geom_point(aes(x = Raza_primaria, y = Altitud)) +
-  geom_jitter(aes(x = Raza_primaria, y = Altitud, colour = Raza_primaria), alpha = 0.3) +
+  # geom_point(aes(x = raza, y = Altitud)) +
+  geom_jitter(aes(x = raza, y = Altitud, colour = raza), alpha = 0.3) +
   coord_flip() +
   theme_minimal() +
   theme(legend.position = "none") +
@@ -334,9 +341,9 @@ figura2
 head(Altitud)
 
 Altitud2 <- Altitud %>% 
-  group_by(Raza_primaria) %>% 
+  group_by(raza) %>% 
   summarise_all(median) %>% 
-  left_join(colores1, by = "Raza_primaria") %>% 
+  left_join(colores1, by = "raza") %>% 
   mutate(posicion = seq(1:n())) %>% 
   mutate(origen = 0)
 
@@ -347,7 +354,7 @@ figura3 <- ggplot(data = Altitud2) +
   geom_curve(aes(x = origen, y = origen, xend = posicion, yend = Altitud, color = colores), curvature = 0.2, alpha = 0.5 ) +
   geom_point(aes(x = posicion, y = Altitud, color = colores), size = 10, alpha = 0.5) +
   scale_color_manual(values = colores) + 
-  geom_text_repel(aes(x = posicion, y = Altitud, label = Raza_primaria)) + 
+  geom_text_repel(aes(x = posicion, y = Altitud, label = raza)) + 
   theme_classic() + 
   theme(legend.position = "none") +
   geom_hline(yintercept = 1000, linetype = "dashed") +
