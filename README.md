@@ -62,5 +62,5 @@ https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf
 
 *	Visualización de datos en R  
 
-[R Markdown de los datos visualizados](day_2a/ejercicio_d7.Rmd)
+[R Markdown de los datos visualizados](day_2a/ejercicio_d7.html)
 
