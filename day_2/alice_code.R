@@ -66,9 +66,9 @@ no_records <- no_records[1,1]
 # Define desired number of records and limit. Number of pages and offset will be estimated based on the number of records to download
 no_records <- no_records # this was estimated above with a query to count the total number of records, but you can also manually change it to a custom desired number
 my_limit <- 1000 # max 1000
-#no_pages <- ceiling(no_records/my_limit)
+no_pages <- ceiling(no_records/my_limit)
 
-no_pages <- 2
+#no_pages <- 2
 
 ## Define offseet.
 # You can use the following loop:
@@ -135,4 +135,8 @@ for (i in c(1:length(my_offset))) {
   #end of loop
 }
 
+head(data)
+dim(data)
+
+writexl::write_xlsx(data, path = "day_2/database/Tabla1.xlsx", col_names = T)
 

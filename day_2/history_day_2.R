@@ -11,24 +11,20 @@ library(treemapify)
 library(mxmaps)
 library(colorfindr)
 
-Tabla1 <- source("day_2/alice_code.R")
-head(Tabla1)
-
-writexl::write_xlsx(Tabla1, path = "day_2/database/Tabla1.xlsx", col_names = T)
-#tardó 10 minutos
- #Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
-
-# The data base of "data" was produced with de file: PGMN:Zendro2R.Rmd
 
 
-Tabla1 <- data %>% 
+Tabla1 <- read_xlsx("day_2/database/Tabla1.xlsx", 
+                        sheet = "Sheet1")
+
+
+Tabla1 <- Tabla1 %>% 
   select(estado, longitud, latitud, genero, especie, raza, altitud)
 
-
+head(Tabla1)
+summary(Tabla1)
+dim(Tabla1)
 #Distribución en el país
 #Usemos primero el paquete de mxmaps para hacer hexágonos del país
-
-
 
 # Ver la página de mxmaps
 data("df_mxstate_2020")
