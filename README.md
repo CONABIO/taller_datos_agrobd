@@ -56,5 +56,11 @@ https://github.com/CONABIO/TallerDatosAgrobd/blob/main/codigo_conducta.pdf
 [Función `get_from_graphQL.R`](day_1/get_from_graphQL.R)
 
 ## Día 2
-*	Exploración de datos en R
-*	Visualización de datos en R
+*	Exploración de datos en R  
+
+[Código de R para el manejo y visualización de Datos](day_2/history_day_2.R)
+
+*	Visualización de datos en R  
+
+[R Markdown de los datos visualizados](day_2a/ejercicio_d7.Rmd)
+

@@ -12,7 +12,9 @@ library(mxmaps)
 library(colorfindr)
 
 Tabla1 <- source("day_2/alice_code.R")
+head(Tabla1)
 
+writexl::write_xlsx(Tabla1, path = "day_2/database/Tabla1.xlsx", col_names = T)
 #tardó 10 minutos
  #Tabla <- read_excel("day_2/database/PGM_update2017.xlsx", sheet = "PGM_maices_Alex", col_names = T)
 
